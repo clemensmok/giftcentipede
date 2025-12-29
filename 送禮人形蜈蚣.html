@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="禮物蜈蚣">
+    <meta name="theme-color" content="#c41e3a">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23c41e3a' width='100' height='100' rx='20'/><text y='70' x='50' text-anchor='middle' font-size='60'>🐛</text></svg>">
+    <title>人型禮物蜈蚣</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #c41e3a;
+            --primary-dark: #8b0000;
+            --secondary: #228b22;
+            --gold: #ffd700;
+            --bg-light: #fff8f0;
+            --bg-dark: #1a1a2e;
+            --card-light: #ffffff;
+            --card-dark: #16213e;
+            --text-light: #2d2d2d;
+            --text-dark: #e8e8e8;
+            --shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .dark {
+            --bg: var(--bg-dark);
+            --card: var(--card-dark);
+            --text: var(--text-dark);
+            --text-muted: #a0a0a0;
+        }
+
+        :root:not(.dark) {
+            --bg: var(--bg-light);
+            --card: var(--card-light);
+            --text: var(--text-light);
+            --text-muted: #666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+            /* iOS safe area support */
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            color: rgba(255,255,255,0.6);
+            font-size: 1rem;
+            animation: fall linear infinite;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .dark .snowflake {
+            color: rgba(255,255,255,0.3);
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0.3; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .section-title i {
+            font-size: 1.2rem;
+        }
+
+        .participant-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .participant-input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid rgba(196, 30, 58, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .participant-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(196, 30, 58, 0.1);
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 30, 58, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), #1a6b1a);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 139, 34, 0.4);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), #e6c200);
+            color: #333;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .participants-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .participants-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .participants-list::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+        }
+
+        .participants-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .participant-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--gold));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .participant-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .remove-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(196, 30, 58, 0.1);
+            color: var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .draw-section {
+            text-align: center;
+        }
+
+        .draw-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+
+        .draw-btn i {
+            font-size: 1.4rem;
+        }
+
+        .min-warning {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 12px;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .validation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--secondary), #1a6b1a);
+            color: white;
+            border-radius: 30px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* Reveal one by one styles */
+        .reveal-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .reveal-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(196, 30, 58, 0.2);
+            transition: all 0.3s;
+        }
+
+        .progress-dot.revealed {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+
+        .progress-dot.current {
+            background: var(--gold);
+            transform: scale(1.4);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.9); }
+        }
+
+        .reveal-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 24px;
+            padding: 40px 30px;
+            color: white;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reveal-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: shimmer 3s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .reveal-number {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .reveal-giver {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .reveal-arrow-container {
+            margin: 20px 0;
+        }
+
+        .reveal-arrow {
+            width: 60px;
+            height: 60px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .reveal-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .reveal-receiver {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-shadow: 0 2px 15px rgba(255, 215, 0, 0.5);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reveal-receiver.hidden {
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: transparent;
+            animation: mysteryPulse 1.5s infinite;
+        }
+
+        @keyframes mysteryPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .reveal-receiver.revealing {
+            animation: revealName 0.8s ease forwards;
+        }
+
+        @keyframes revealName {
+            0% { transform: scale(0) rotateY(180deg); opacity: 0; }
+            50% { transform: scale(1.2) rotateY(90deg); }
+            100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+        }
+
+        .next-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.1rem;
+        }
+
+        .all-done {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .all-done-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--gold), #e6c200);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: celebrateBounce 0.6s ease;
+        }
+
+        @keyframes celebrateBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .all-done-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .all-done-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .results-summary {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .summary-item i {
+            color: var(--gold);
+        }
+
+        /* Toggle option styles */
+        .option-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(128,128,128,0.2);
+        }
+
+        .toggle-option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-option input {
+            display: none;
+        }
+
+        .toggle-slider {
+            width: 52px;
+            height: 28px;
+            background: rgba(128,128,128,0.3);
+            border-radius: 14px;
+            position: relative;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .toggle-slider::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .toggle-option input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--secondary), #1a6b1a);
+        }
+
+        .toggle-option input:checked + .toggle-slider::after {
+            left: 27px;
+        }
+
+        .toggle-label {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .toggle-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .toggle-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 100;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @media (max-width: 480px) {
+            .logo { font-size: 2rem; }
+            .card { padding: 20px; }
+            .participant-controls { flex-direction: column; }
+            .btn { padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration" id="bgDecoration"></div>
+
+    <div class="container">
+        <header>
+            <h1 class="logo">🐛 人型禮物蜈蚣</h1>
+            <p class="subtitle">公平抽籤，歡樂交換！</p>
+        </header>
+
+        <div class="card" id="inputCard">
+            <div class="section-title">
+                <i class="fas fa-users"></i>
+                <span>參與者名單</span>
+            </div>
+
+            <div class="participant-controls">
+                <input type="text" class="participant-input" id="nameInput" placeholder="輸入參與者姓名..." maxlength="20">
+                <button class="btn btn-primary" id="addBtn" onclick="addParticipant()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <div class="participants-list" id="participantsList">
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-user-plus"></i>
+                    <p>請新增至少 2 位參與者</p>
+                </div>
+            </div>
+
+            <div class="option-section">
+                <label class="toggle-option">
+                    <input type="checkbox" id="noMutualToggle" checked onchange="updateDrawButton()">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">
+                        <span class="toggle-title">禁止互相送禮</span>
+                        <span class="toggle-desc">避免 A→B 同時 B→A 的情況</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <div class="card draw-section" id="drawSection">
+            <button class="btn btn-gold draw-btn" id="drawBtn" onclick="startDraw()" disabled>
+                <i class="fas fa-magic"></i>
+                <span>開始抽籤</span>
+            </button>
+            <p class="min-warning" id="minWarning">需要至少 2 位參與者才能抽籤</p>
+            <p class="min-warning" id="mutualWarning" style="display: none; color: #e67e22;">
+                <i class="fas fa-exclamation-triangle"></i>
+                禁止互相送禮需要至少 3 位參與者
+            </p>
+        </div>
+
+        <div class="card results-container" id="resultsContainer">
+            <div class="section-title">
+                <i class="fas fa-gift"></i>
+                <span>抽籤結果</span>
+            </div>
+
+            <!-- Progress dots -->
+            <div class="reveal-progress" id="revealProgress"></div>
+
+            <!-- Current reveal card -->
+            <div id="revealArea"></div>
+
+            <!-- All done area -->
+            <div id="allDoneArea"></div>
+        </div>
+    </div>
+
+
+    <script>
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Create snowflakes
+        function createSnowflakes() {
+            const container = document.getElementById('bgDecoration');
+            const snowflakes = ['❄', '❅', '❆', '✦', '✧'];
+
+            for (let i = 0; i < 30; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                snowflake.style.fontSize = (Math.random() * 0.8 + 0.6) + 'rem';
+                container.appendChild(snowflake);
+            }
+        }
+        createSnowflakes();
+
+        // App state
+        let participants = [];
+        let results = [];
+        let orderedResults = [];
+        let currentRevealIndex = 0;
+        let isRevealed = false;
+        let noMutualMode = true;
+
+        const nameInput = document.getElementById('nameInput');
+        const participantsList = document.getElementById('participantsList');
+        const emptyState = document.getElementById('emptyState');
+        const drawBtn = document.getElementById('drawBtn');
+        const minWarning = document.getElementById('minWarning');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsList = document.getElementById('resultsList');
+
+        // Enter key to add participant
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addParticipant();
+            }
+        });
+
+        function addParticipant() {
+            const name = nameInput.value.trim();
+
+            if (!name) return;
+
+            if (participants.includes(name)) {
+                shakeInput();
+                return;
+            }
+
+            participants.push(name);
+            nameInput.value = '';
+            updateParticipantsList();
+            updateDrawButton();
+        }
+
+        function shakeInput() {
+            nameInput.style.animation = 'none';
+            nameInput.offsetHeight; // Trigger reflow
+            nameInput.style.animation = 'shake 0.5s ease';
+        }
+
+        function removeParticipant(index) {
+            participants.splice(index, 1);
+            updateParticipantsList();
+            updateDrawButton();
+        }
+
+        function updateParticipantsList() {
+            if (participants.length === 0) {
+                emptyState.style.display = 'block';
+                participantsList.innerHTML = '';
+                participantsList.appendChild(emptyState);
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            participantsList.innerHTML = participants.map((name, index) => `
+                <div class="participant-item" style="animation-delay: ${index * 0.05}s">
+                    <div class="participant-number">${index + 1}</div>
+                    <div class="participant-name">${escapeHtml(name)}</div>
+                    <button class="remove-btn" onclick="removeParticipant(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateDrawButton() {
+            const noMutual = document.getElementById('noMutualToggle').checked;
+            const minRequired = noMutual ? 3 : 2;
+            const canDraw = participants.length >= minRequired;
+
+            drawBtn.disabled = !canDraw;
+
+            // Show appropriate warning
+            if (participants.length < 2) {
+                minWarning.style.display = 'block';
+                document.getElementById('mutualWarning').style.display = 'none';
+            } else if (noMutual && participants.length < 3) {
+                minWarning.style.display = 'none';
+                document.getElementById('mutualWarning').style.display = 'block';
+            } else {
+                minWarning.style.display = 'none';
+                document.getElementById('mutualWarning').style.display = 'none';
+            }
+        }
+
+        // Generate a single cycle permutation (no self-gifting, no mutual pairs)
+        // This creates one big loop: A→B→C→D→A
+        function generateSingleCycle(arr) {
+            const shuffled = [...arr];
+            const n = shuffled.length;
+
+            // Fisher-Yates shuffle to randomize order
+            for (let i = n - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+
+            // Create receivers by shifting: each person gives to next in shuffled order
+            // Last person gives to first
+            const receivers = [];
+            for (let i = 0; i < n; i++) {
+                receivers[arr.indexOf(shuffled[i])] = shuffled[(i + 1) % n];
+            }
+
+            return receivers;
+        }
+
+        // Derangement algorithm - ensures no one gets themselves (allows mutual pairs)
+        function generateDerangement(arr) {
+            const n = arr.length;
+            let attempts = 0;
+            const maxAttempts = 1000;
+
+            while (attempts < maxAttempts) {
+                const shuffled = [...arr];
+
+                // Fisher-Yates shuffle
+                for (let i = n - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+
+                // Check if it's a valid derangement
+                let isValid = true;
+                for (let i = 0; i < n; i++) {
+                    if (shuffled[i] === arr[i]) {
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                if (isValid) {
+                    return shuffled;
+                }
+                attempts++;
+            }
+
+            // Fallback: manual derangement by shifting
+            const shifted = [...arr];
+            shifted.push(shifted.shift());
+            return shifted;
+        }
+
+        function validateResults(givers, receivers, checkMutual = false) {
+            // Check 1: No self-gifting
+            for (let i = 0; i < givers.length; i++) {
+                if (givers[i] === receivers[i]) {
+                    return { valid: false, error: '發現自己送給自己的情況' };
+                }
+            }
+
+            // Check 2: Everyone gives exactly once
+            const giverSet = new Set(givers);
+            if (giverSet.size !== givers.length) {
+                return { valid: false, error: '有人重複送禮' };
+            }
+
+            // Check 3: Everyone receives exactly once
+            const receiverSet = new Set(receivers);
+            if (receiverSet.size !== receivers.length) {
+                return { valid: false, error: '有人重複收禮' };
+            }
+
+            // Check 4: No duplicates in pairings
+            const pairings = givers.map((g, i) => `${g}->${receivers[i]}`);
+            const pairingSet = new Set(pairings);
+            if (pairingSet.size !== pairings.length) {
+                return { valid: false, error: '發現重複配對' };
+            }
+
+            // Check 5: No mutual pairs (if enabled)
+            if (checkMutual) {
+                for (let i = 0; i < givers.length; i++) {
+                    const giver = givers[i];
+                    const receiver = receivers[i];
+                    // Check if receiver gives back to giver
+                    const receiverIndex = givers.indexOf(receiver);
+                    if (receiverIndex !== -1 && receivers[receiverIndex] === giver) {
+                        return { valid: false, error: '發現互相送禮的情況' };
+                    }
+                }
+            }
+
+            return { valid: true };
+        }
+
+        function startDraw() {
+            noMutualMode = document.getElementById('noMutualToggle').checked;
+            const minRequired = noMutualMode ? 3 : 2;
+
+            if (participants.length < minRequired) return;
+
+            // Use single cycle algorithm if no mutual pairs allowed
+            // Otherwise use standard derangement
+            const receivers = noMutualMode
+                ? generateSingleCycle(participants)
+                : generateDerangement(participants);
+
+            // Validate
+            const validation = validateResults(participants, receivers, noMutualMode);
+            if (!validation.valid) {
+                console.error('Validation failed, retrying...');
+                startDraw(); // Retry
+                return;
+            }
+
+            results = participants.map((giver, index) => ({
+                giver,
+                receiver: receivers[index]
+            }));
+
+            showResults();
+            createConfetti();
+        }
+
+        function showResults() {
+            document.getElementById('inputCard').style.display = 'none';
+            document.getElementById('drawSection').style.display = 'none';
+            resultsContainer.classList.add('show');
+
+            currentRevealIndex = 0;
+            isRevealed = false;
+
+            // Reorder results to follow the gift chain
+            // Start from a random person, then follow who they give to
+            orderedResults = [];
+            const resultMap = {};
+            results.forEach(r => {
+                resultMap[r.giver] = r;
+            });
+
+            // Start with a RANDOM participant and follow the chain
+            const randomStartIndex = Math.floor(Math.random() * results.length);
+            let currentGiver = results[randomStartIndex].giver;
+            const visited = new Set();
+
+            while (orderedResults.length < results.length && !visited.has(currentGiver)) {
+                visited.add(currentGiver);
+                const result = resultMap[currentGiver];
+                orderedResults.push(result);
+                currentGiver = result.receiver;
+            }
+
+            // Create progress dots
+            const progressHtml = orderedResults.map((_, index) =>
+                `<div class="progress-dot ${index === 0 ? 'current' : ''}" id="dot-${index}"></div>`
+            ).join('');
+            document.getElementById('revealProgress').innerHTML = progressHtml;
+
+            // Clear areas
+            document.getElementById('allDoneArea').innerHTML = '';
+
+            // Show first card
+            showCurrentRevealCard();
+        }
+
+        function showCurrentRevealCard() {
+            const result = orderedResults[currentRevealIndex];
+            const revealArea = document.getElementById('revealArea');
+
+            revealArea.innerHTML = `
+                <div class="reveal-container">
+                    <div class="reveal-card">
+                        <div class="reveal-number">第 ${currentRevealIndex + 1} / ${orderedResults.length} 位</div>
+                        <div class="reveal-giver">${escapeHtml(result.giver)}</div>
+                        <div class="reveal-arrow-container">
+                            <div class="reveal-arrow">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                        </div>
+                        <div class="reveal-label">送禮對象</div>
+                        <div class="reveal-receiver ${isRevealed ? 'revealing' : 'hidden'}" id="receiverName">
+                            ${isRevealed ? escapeHtml(result.receiver) : '？？？'}
+                        </div>
+                    </div>
+
+                    ${!isRevealed ? `
+                        <button class="btn btn-gold next-btn" onclick="revealReceiver()">
+                            <i class="fas fa-eye"></i>
+                            <span>揭曉結果</span>
+                        </button>
+                    ` : `
+                        <button class="btn btn-primary next-btn" onclick="nextPerson()">
+                            <i class="fas fa-arrow-right"></i>
+                            <span>${currentRevealIndex < orderedResults.length - 1 ? '下一位' : '查看總結'}</span>
+                        </button>
+                    `}
+                </div>
+            `;
+        }
+
+        function revealReceiver() {
+            isRevealed = true;
+            const result = orderedResults[currentRevealIndex];
+            const receiverEl = document.getElementById('receiverName');
+
+            receiverEl.classList.remove('hidden');
+            receiverEl.classList.add('revealing');
+            receiverEl.textContent = result.receiver;
+
+            // Update button
+            showCurrentRevealCard();
+
+            // Small confetti burst
+            createConfetti(20);
+        }
+
+        function nextPerson() {
+            // Mark current dot as revealed
+            document.getElementById(`dot-${currentRevealIndex}`).classList.remove('current');
+            document.getElementById(`dot-${currentRevealIndex}`).classList.add('revealed');
+
+            currentRevealIndex++;
+            isRevealed = false;
+
+            if (currentRevealIndex >= orderedResults.length) {
+                // All done!
+                showAllDone();
+            } else {
+                // Update next dot
+                document.getElementById(`dot-${currentRevealIndex}`).classList.add('current');
+                showCurrentRevealCard();
+            }
+        }
+
+        function showAllDone() {
+            document.getElementById('revealArea').innerHTML = '';
+            document.getElementById('revealProgress').innerHTML = '';
+
+            const allDoneArea = document.getElementById('allDoneArea');
+            allDoneArea.innerHTML = `
+                <div class="all-done">
+                    <div class="all-done-icon">🎉</div>
+                    <div class="all-done-title">抽籤完成！</div>
+                    <div class="all-done-subtitle">所有人都已配對成功</div>
+
+                    <div class="results-summary">
+                        ${orderedResults.map((r) => `
+                            <div class="summary-item">
+                                <i class="fas fa-gift"></i>
+                                <span><strong>${escapeHtml(r.giver)}</strong> → ${escapeHtml(r.receiver)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="resetAll()">
+                            <i class="fas fa-redo"></i>
+                            <span>重新開始</span>
+                        </button>
+                        <button class="btn btn-gold" onclick="reDrawSameParticipants()">
+                            <i class="fas fa-sync"></i>
+                            <span>重新抽籤</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Big confetti celebration
+            createConfetti(80);
+        }
+
+        function resetAll() {
+            participants = [];
+            results = [];
+            orderedResults = [];
+            currentRevealIndex = 0;
+            isRevealed = false;
+            updateParticipantsList();
+            updateDrawButton();
+
+            document.getElementById('inputCard').style.display = 'block';
+            document.getElementById('drawSection').style.display = 'block';
+            resultsContainer.classList.remove('show');
+        }
+
+        function reDrawSameParticipants() {
+            currentRevealIndex = 0;
+            isRevealed = false;
+            resultsContainer.classList.remove('show');
+            document.getElementById('inputCard').style.display = 'block';
+            document.getElementById('drawSection').style.display = 'block';
+
+            // Automatically redraw
+            setTimeout(() => {
+                startDraw();
+            }, 300);
+        }
+
+        function createConfetti(count = 50) {
+            const colors = ['#c41e3a', '#228b22', '#ffd700', '#ff6b6b', '#4ecdc4'];
+
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
