@@ -1,0 +1,25 @@
+# 人型禮物蜈蚣 — NAS container
+#
+# Synology Container Manager / QNAP Container Station / Unraid / TrueNAS / Portainer
+# 1. 將呢個資料夾上傳或 clone 到 NAS
+# 2. 喺該資料夾執行: docker compose up -d --build
+#    或者用 Container Manager「專案」匯入呢份 docker-compose.yml
+# 3. 瀏覽器打開 http://<NAS-IP>:8088
+#
+# 改端口: PORT=8888 docker compose up -d --build
+# 字型同圖示由瀏覽器向 Google Fonts / cdnjs 載入，NAS 本身唔使上網。
+
+services:
+  giftcentipede:
+    build: .
+    image: giftcentipede:latest
+    container_name: giftcentipede
+    ports:
+      - "${PORT:-8088}:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
